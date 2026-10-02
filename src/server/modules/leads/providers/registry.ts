@@ -1,16 +1,18 @@
-﻿import { LeadSourceProvider } from "./provider.interface";
+import { LeadSourceProvider } from "./provider.interface";
 import { OsmProvider } from "./osm.provider";
 import { CsvProvider } from "./csv.provider";
 import { GooglePlacesProvider } from "./places.provider";
+import { ScrapeDoProvider } from "./scrapedo.provider";
 import { AppError } from "@/server/platform/errors/app-error";
 
 export class ProviderRegistry {
   private providers: Map<string, LeadSourceProvider> = new Map();
 
   constructor() {
+    this.register(new ScrapeDoProvider());
+    this.register(new GooglePlacesProvider());
     this.register(new OsmProvider());
     this.register(new CsvProvider());
-    this.register(new GooglePlacesProvider());
   }
 
   register(provider: LeadSourceProvider) {

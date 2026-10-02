@@ -21,7 +21,7 @@ interface SearchResultLead {
 }
 
 export default function LeadGeneratorPage() {
-  const [provider, setProvider] = useState("osm");
+  const [provider, setProvider] = useState("scrape_do");
   const [category, setCategory] = useState("Software Agency");
   const [niche, setNiche] = useState("Web Development");
   const [city, setCity] = useState("Bangalore");
@@ -199,8 +199,9 @@ export default function LeadGeneratorPage() {
               onChange={(e) => setProvider(e.target.value)}
               className="w-full px-3 py-2 text-sm rounded-md border border-input bg-background focus:outline-none focus:ring-1 focus:ring-ring"
             >
-              <option value="osm">OpenStreetMap / Overpass (Free / Direct)</option>
+              <option value="scrape_do">Google Maps via Scrape.do (Live & Real-time)</option>
               <option value="google_places">Google Places API (New)</option>
+              <option value="osm">OpenStreetMap / Overpass (Legacy / Stale)</option>
               <option value="csv">Custom CSV Import</option>
             </select>
           </div>
@@ -222,7 +223,13 @@ export default function LeadGeneratorPage() {
 
         <div className="flex items-center justify-between pt-2 border-t border-border/60">
           <span className="text-xs text-muted-foreground font-mono">
-            {provider === "osm" ? "Free unlimited public directory queries" : "Official API integration"}
+            {provider === "scrape_do"
+              ? "Live Google Maps scraper (fresh websites, phone numbers, ratings)"
+              : provider === "google_places"
+              ? "Official Google Places API (New)"
+              : provider === "osm"
+              ? "OpenStreetMap public directory"
+              : "Direct CSV file import"}
           </span>
           <Button type="submit" disabled={loading} className="gap-2">
             <Search className="h-4 w-4" />

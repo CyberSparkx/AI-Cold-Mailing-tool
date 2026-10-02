@@ -1,4 +1,4 @@
-﻿import { z } from "zod";
+import { z } from "zod";
 
 const envSchema = z.object({
   NODE_ENV: z.enum(["development", "test", "production"]).default("development"),
@@ -37,6 +37,7 @@ const envSchema = z.object({
   AI_MODEL_ESCALATE: z.string().default("gemini-2.0-flash"),
 
   // Lead Providers
+  SCRAPE_DO_API_KEY: z.string().optional().default(""),
   GOOGLE_PLACES_API_KEY: z.string().optional().default(""),
   OSM_OVERPASS_URL: z.string().default("https://overpass-api.de/api/interpreter"),
   SEARCH_API_KEY: z.string().optional().default(""),

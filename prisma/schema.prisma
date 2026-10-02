@@ -1,0 +1,433 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+// ───────── Enums ─────────
+enum LeadStatus {
+  NEW
+  CONTACTED
+  REPLIED
+  QUALIFIED
+  DISQUALIFIED
+  DO_NOT_CONTACT
+}
+
+enum CampaignStatus {
+  DRAFT
+  READY
+  RUNNING
+  PAUSED
+  COMPLETED
+  CANCELLED
+}
+
+enum EmailStatus {
+  NOT_SENT
+  QUEUED
+  SENDING
+  SENT
+  FAILED
+  REPLIED
+  UNSUBSCRIBED
+  BOUNCED
+  SKIPPED
+}
+
+enum EmailLogStatus {
+  SENT
+  FAILED
+  BOUNCED
+}
+
+enum GoogleService {
+  GMAIL_SEND
+  GMAIL_READ
+  SHEETS
+}
+
+enum InboxCategory {
+  WEBSITE_INQUIRY
+  SOFTWARE_INQUIRY
+  FREELANCE_OPPORTUNITY
+  JOB_OPPORTUNITY
+  PARTNERSHIP
+  GENERAL
+  NOT_RELEVANT
+}
+
+enum OpportunityStatus {
+  NEW
+  REVIEWED
+  REPLIED
+  DISMISSED
+}
+
+enum SuppressionReason {
+  UNSUBSCRIBED
+  BOUNCED
+  MANUAL
+  COMPLAINT
+  REPLIED_NEGATIVE
+}
+
+enum SheetPurpose {
+  LEAD_EXPORT
+  CAMPAIGN_SOURCE
+}
+
+// ───────── Identity ─────────
+model User {
+  id             String          @id @default(auto()) @map("_id") @db.ObjectId
+  name           String?
+  email          String          @unique
+  image          String?
+  timezone       String          @default("UTC")
+  settings       UserSettings?
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+
+  accounts       Account[]
+  googleAccounts GoogleAccount[]
+  leads          Lead[]
+  campaigns      Campaign[]
+  inbox          InboxMessage[]
+}
+
+type UserSettings {
+  senderName        String?
+  signature         String?
+  portfolioUrl      String?
+  postalAddress     String?
+  defaultDailyLimit Int         @default(25)
+  sendWindowStart   Int         @default(9)
+  sendWindowEnd     Int         @default(17)
+  aiMonthlyTokenCap Int?
+}
+
+model Account {
+  id                String  @id @default(auto()) @map("_id") @db.ObjectId
+  userId            String  @db.ObjectId
+  type              String
+  provider          String
+  providerAccountId String
+  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model VerificationToken {
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  identifier String
+  token      String   @unique
+  expires    DateTime
+}
+
+// ───────── Google Connection (API Access) ─────────
+model GoogleAccount {
+  id                   String          @id @default(auto()) @map("_id") @db.ObjectId
+  userId               String          @db.ObjectId
+  provider             String          @default("google")
+  providerAccountId    String
+  email                String
+  accessTokenEnc       String?
+  refreshTokenEnc      String?
+  keyVersion           Int             @default(1)
+  accessTokenExpiresAt DateTime?
+  scopes               String[]
+  services             GoogleService[]
+  status               String          @default("ACTIVE")
+  lastRefreshError     String?
+  createdAt            DateTime        @default(now())
+  updatedAt            DateTime        @updatedAt
+  user                 User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, providerAccountId])
+  @@index([userId])
+}
+
+// ───────── Module 1: Leads ─────────
+model Lead {
+  id                 String      @id @default(auto()) @map("_id") @db.ObjectId
+  userId             String      @db.ObjectId
+  listId             String?     @db.ObjectId
+  businessName       String
+  category           String?
+  niche              String?
+  website            String?
+  websiteDomain      String?
+  email              String?
+  emailNormalized    String?
+  emailSource        String?
+  emailIsRole        Boolean?
+  phone              String?
+  phoneE164          String?
+  address            String?
+  city               String?
+  state              String?
+  country            String?
+  postalCode         String?
+  latitude           Float?
+  longitude          Float?
+  rating             Float?
+  reviewCount        Int?
+  source             String
+  sourceUrl          String?
+  externalId         String?
+  dedupeKey          String
+  websiteSignals     Json?
+  status             LeadStatus  @default(NEW)
+  emailStatus        EmailStatus @default(NOT_SENT)
+  notes              String?
+  retentionExpiresAt DateTime?
+  createdAt          DateTime    @default(now())
+  updatedAt          DateTime    @updatedAt
+  user               User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, dedupeKey])
+  @@index([userId, createdAt])
+  @@index([userId, category, city])
+  @@index([userId, emailNormalized])
+}
+
+model LeadList {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  userId    String   @db.ObjectId
+  name      String
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+}
+
+model LeadSearch {
+  id                 String   @id @default(auto()) @map("_id") @db.ObjectId
+  userId             String   @db.ObjectId
+  providerKey        String
+  paramsHash         String
+  params             Json
+  resultCount        Int
+  estimatedCostUnits Float?
+  createdAt          DateTime @default(now())
+  expiresAt          DateTime
+
+  @@index([userId, paramsHash])
+}
+
+model SheetLink {
+  id            String       @id @default(auto()) @map("_id") @db.ObjectId
+  userId        String       @db.ObjectId
+  spreadsheetId String
+  sheetTitle    String
+  purpose       SheetPurpose
+  columnMap     Json
+  leadIdColumn  String?
+  lastSyncedAt  DateTime?
+  createdAt     DateTime     @default(now())
+
+  @@unique([userId, spreadsheetId, sheetTitle])
+}
+
+// ───────── Module 2: Campaigns ─────────
+model Campaign {
+  id                   String         @id @default(auto()) @map("_id") @db.ObjectId
+  userId               String         @db.ObjectId
+  name                 String
+  status               CampaignStatus @default(DRAFT)
+  isFollowUp           Boolean        @default(false)
+  parentCampaignId     String?        @db.ObjectId
+  subjectTemplate      String
+  bodyTemplate         String
+  useAiPersonalization Boolean        @default(false)
+  dailyLimit           Int
+  sendWindowStart      Int?
+  sendWindowEnd        Int?
+  sheetLinkId          String?        @db.ObjectId
+  stats                CampaignStats
+  startedAt            DateTime?
+  pausedAt             DateTime?
+  completedAt          DateTime?
+  createdAt            DateTime       @default(now())
+  updatedAt            DateTime       @updatedAt
+  user                 User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  recipients           CampaignLead[]
+  logs                 EmailLog[]
+
+  @@index([userId, status])
+}
+
+type CampaignStats {
+  total        Int @default(0)
+  sent         Int @default(0)
+  failed       Int @default(0)
+  queued       Int @default(0)
+  replied      Int @default(0)
+  bounced      Int @default(0)
+  skipped      Int @default(0)
+}
+
+model CampaignLead {
+  id                 String      @id @default(auto()) @map("_id") @db.ObjectId
+  userId             String      @db.ObjectId
+  campaignId         String      @db.ObjectId
+  leadId             String?     @db.ObjectId
+  sheetRowRef        String?
+  businessName       String
+  email              String
+  emailNormalized    String
+  category           String?
+  location           String?
+  website            String?
+  personalizedFields Json?
+  emailStatus        EmailStatus @default(NOT_SENT)
+  attemptId          String?
+  rfcMessageId       String?
+  providerMessageId  String?
+  threadId           String?
+  sentAt             DateTime?
+  error              String?
+  errorRetryable     Boolean?
+  retryCount         Int         @default(0)
+  nextAttemptAt      DateTime?
+  createdAt          DateTime    @default(now())
+  updatedAt          DateTime    @updatedAt
+  campaign           Campaign    @relation(fields: [campaignId], references: [id], onDelete: Cascade)
+
+  @@unique([campaignId, emailNormalized])
+  @@index([campaignId, emailStatus, nextAttemptAt])
+  @@index([userId, emailNormalized])
+}
+
+model ContactLedger {
+  id              String   @id @default(auto()) @map("_id") @db.ObjectId
+  userId          String   @db.ObjectId
+  emailNormalized String
+  firstCampaignId String   @db.ObjectId
+  lastContactedAt DateTime
+  contactCount    Int      @default(1)
+
+  @@unique([userId, emailNormalized])
+}
+
+model SuppressionEntry {
+  id              String            @id @default(auto()) @map("_id") @db.ObjectId
+  userId          String            @db.ObjectId
+  emailNormalized String?
+  domain          String?
+  reason          SuppressionReason
+  note            String?
+  createdAt       DateTime          @default(now())
+
+  @@unique([userId, emailNormalized])
+  @@index([userId, domain])
+}
+
+model EmailLog {
+  id                String         @id @default(auto()) @map("_id") @db.ObjectId
+  userId            String         @db.ObjectId
+  campaignId        String         @db.ObjectId
+  campaignLeadId    String         @db.ObjectId
+  recipient         String
+  subject           String
+  status            EmailLogStatus
+  providerMessageId String?
+  threadId          String?
+  rfcMessageId      String?
+  attempt           Int            @default(1)
+  error             String?
+  errorCode         String?
+  sentAt            DateTime       @default(now())
+  campaign          Campaign       @relation(fields: [campaignId], references: [id], onDelete: Cascade)
+
+  @@index([campaignId, sentAt])
+  @@index([userId, sentAt])
+}
+
+model DailySendCounter {
+  id     String @id @default(auto()) @map("_id") @db.ObjectId
+  userId String @db.ObjectId
+  date   String
+  count  Int    @default(0)
+  limit  Int
+
+  @@unique([userId, date])
+}
+
+model SheetSyncOutbox {
+  id             String   @id @default(auto()) @map("_id") @db.ObjectId
+  userId         String   @db.ObjectId
+  sheetLinkId    String   @db.ObjectId
+  campaignLeadId String   @db.ObjectId
+  patch          Json
+  createdAt      DateTime @default(now())
+
+  @@unique([sheetLinkId, campaignLeadId])
+}
+
+// ───────── Module 3: Inbox ─────────
+model InboxMessage {
+  id                   String             @id @default(auto()) @map("_id") @db.ObjectId
+  userId               String             @db.ObjectId
+  gmailMessageId       String
+  threadId             String
+  sender               String?
+  senderEmail          String
+  subject              String?
+  snippet              String?
+  receivedAt           DateTime
+  classification       InboxCategory?
+  confidence           Float?
+  reason               String?
+  isOpportunity        Boolean            @default(false)
+  opportunityStatus    OpportunityStatus  @default(NEW)
+  userOverrideCategory InboxCategory?
+  contentHash          String?
+  modelUsed            String?
+  promptVersion        String?
+  processedAt          DateTime?
+  expiresAt            DateTime?
+  user                 User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, gmailMessageId])
+  @@index([userId, isOpportunity, receivedAt])
+  @@index([userId, opportunityStatus])
+}
+
+model InboxSyncState {
+  id             String    @id @default(auto()) @map("_id") @db.ObjectId
+  userId         String    @unique @db.ObjectId
+  historyId      String?
+  lastSyncAt     DateTime?
+  lastFullSyncAt DateTime?
+  status         String    @default("IDLE")
+}
+
+// ───────── Cross-cutting ─────────
+model AiUsage {
+  id           String @id @default(auto()) @map("_id") @db.ObjectId
+  userId       String @db.ObjectId
+  month        String
+  task         String
+  model        String
+  calls        Int    @default(0)
+  inputTokens  Int    @default(0)
+  outputTokens Int    @default(0)
+
+  @@unique([userId, month, task, model])
+}
+
+model AuditLog {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  userId    String   @db.ObjectId
+  action    String
+  entity    String?
+  entityId  String?
+  meta      Json?
+  requestId String?
+  createdAt DateTime @default(now())
+
+  @@index([userId, createdAt])
+}

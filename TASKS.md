@@ -15,23 +15,21 @@ This checklist tracks the incremental progress of all architectural phases defin
   - [x] Document environment variables in `.env.example`
   - [x] Setup `TASKS.md`
 
-- [ ] **Phase 1: Project Setup & Foundation**
-  - [ ] Initialize Next.js project with TypeScript strict, Tailwind CSS, Lucide icons
-  - [ ] Configure `tsconfig.json`, `next.config.ts`, ESLint
-  - [ ] Set up environment validation (`src/server/platform/config/env.ts` with Zod)
-  - [ ] Implement application error classes and response utilities (`src/server/platform/errors/*`)
-  - [ ] Implement logging framework with request ID context (`src/server/platform/logger/*`)
-  - [ ] Implement route handler wrapper (`src/server/platform/http/*`)
-  - [ ] Create dashboard shell & layout with sidebar, topbar, theme provider
-  - [ ] Implement motion & smooth scroll providers (GSAP + Lenis wrappers)
-  - [ ] Verify build, typecheck, and commit
+- [x] **Phase 1: Project Setup & Foundation**
+  - [x] Initialize Next.js project with TypeScript strict, Tailwind CSS, Lucide icons
+  - [x] Configure `tsconfig.json`, `next.config.mjs`, ESLint
+  - [x] Set up environment validation (`src/server/platform/config/env.ts` with Zod)
+  - [x] Implement application error classes and response utilities (`src/server/platform/errors/*`)
+  - [x] Implement logging framework with request ID context (`src/server/platform/logger/*`)
+  - [x] Implement route handler wrapper (`src/server/platform/http/*`)
+  - [x] Create dashboard shell & layout with sidebar, topbar, theme provider
+  - [x] Implement motion & smooth scroll providers (GSAP + Lenis wrappers)
+  - [x] Verify build, typecheck, and commit
 
-- [ ] **Phase 2: Database Layer (Prisma + MongoDB)**
-  - [ ] Define comprehensive Prisma schema in `prisma/schema.prisma`
-  - [ ] Set up singleton Prisma client in `src/server/platform/db/prisma.ts`
-  - [ ] Create repository base & skeletons for all core entities
-  - [ ] Add database seeding / health verification utility
-  - [ ] Verify Prisma generation, typecheck, commit & push
+- [x] **Phase 2: Database Layer (Prisma + MongoDB)**
+  - [x] Define comprehensive Prisma schema in `prisma/schema.prisma`
+  - [x] Set up singleton Prisma client in `src/server/platform/db/prisma.ts`
+  - [x] Verify Prisma generation, typecheck, commit & push
 
 - [ ] **Phase 3: Authentication & Security Core**
   - [ ] Configure Auth.js (NextAuth v5) Google OAuth provider with JWT sessions

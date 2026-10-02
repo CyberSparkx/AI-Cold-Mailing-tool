@@ -1,0 +1,76 @@
+export const LEAD_STATUS = {
+  NEW: 'NEW',
+  CONTACTED: 'CONTACTED',
+  REPLIED: 'REPLIED',
+  QUALIFIED: 'QUALIFIED',
+  DISQUALIFIED: 'DISQUALIFIED',
+  DO_NOT_CONTACT: 'DO_NOT_CONTACT',
+} as const;
+
+export type LeadStatus = (typeof LEAD_STATUS)[keyof typeof LEAD_STATUS];
+
+export const CAMPAIGN_STATUS = {
+  DRAFT: 'DRAFT',
+  READY: 'READY',
+  RUNNING: 'RUNNING',
+  PAUSED: 'PAUSED',
+  COMPLETED: 'COMPLETED',
+  CANCELLED: 'CANCELLED',
+} as const;
+
+export type CampaignStatus = (typeof CAMPAIGN_STATUS)[keyof typeof CAMPAIGN_STATUS];
+
+export const EMAIL_STATUS = {
+  NOT_SENT: 'NOT_SENT',
+  QUEUED: 'QUEUED',
+  SENDING: 'SENDING',
+  SENT: 'SENT',
+  FAILED: 'FAILED',
+  REPLIED: 'REPLIED',
+  UNSUBSCRIBED: 'UNSUBSCRIBED',
+  BOUNCED: 'BOUNCED',
+  SKIPPED: 'SKIPPED',
+} as const;
+
+export type EmailStatus = (typeof EMAIL_STATUS)[keyof typeof EMAIL_STATUS];
+
+export const INBOX_CATEGORY = {
+  WEBSITE_INQUIRY: 'WEBSITE_INQUIRY',
+  SOFTWARE_INQUIRY: 'SOFTWARE_INQUIRY',
+  FREELANCE_OPPORTUNITY: 'FREELANCE_OPPORTUNITY',
+  JOB_OPPORTUNITY: 'JOB_OPPORTUNITY',
+  PARTNERSHIP: 'PARTNERSHIP',
+  GENERAL: 'GENERAL',
+  NOT_RELEVANT: 'NOT_RELEVANT',
+} as const;
+
+export type InboxCategory = (typeof INBOX_CATEGORY)[keyof typeof INBOX_CATEGORY];
+
+export const OPPORTUNITY_STATUS = {
+  NEW: 'NEW',
+  REVIEWED: 'REVIEWED',
+  REPLIED: 'REPLIED',
+  DISMISSED: 'DISMISSED',
+} as const;
+
+export type OpportunityStatus = (typeof OPPORTUNITY_STATUS)[keyof typeof OPPORTUNITY_STATUS];
+
+export const SUPPRESSION_REASON = {
+  UNSUBSCRIBED: 'UNSUBSCRIBED',
+  BOUNCED: 'BOUNCED',
+  MANUAL: 'MANUAL',
+  COMPLAINT: 'COMPLAINT',
+  REPLIED_NEGATIVE: 'REPLIED_NEGATIVE',
+} as const;
+
+export type SuppressionReason = (typeof SUPPRESSION_REASON)[keyof typeof SUPPRESSION_REASON];
+
+export const GOOGLE_SERVICE = {
+  GMAIL_SEND: 'GMAIL_SEND',
+  GMAIL_READ: 'GMAIL_READ',
+  SHEETS: 'SHEETS',
+} as const;
+
+export type GoogleService = (typeof GOOGLE_SERVICE)[keyof typeof GOOGLE_SERVICE];
+
+export const DEFAULT_PORTFOLIO_URL = 'https://narenroy.in/';

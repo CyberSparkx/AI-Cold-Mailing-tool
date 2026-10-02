@@ -49,13 +49,13 @@ This checklist tracks the incremental progress of all architectural phases defin
   - [x] Add CSV & Excel export capabilities
   - [x] Test deduplication & lead management, commit & push
 
-- [ ] **Phase 5: Google Integration (OAuth & Google Sheets)**
-  - [ ] Implement incremental OAuth flow for Sheets & Gmail
-  - [ ] Implement encrypted token storage & retrieval
-  - [ ] Implement Google Sheets service (create, read, batched row update, column mapping)
-  - [ ] Create `SheetSyncOutbox` write-behind queue logic
-  - [ ] Build Google settings UI (`/dashboard/settings/google`)
-  - [ ] Verify Google integration & commit
+- [x] **Phase 5: Google Integration (OAuth & Google Sheets)**
+  - [x] Implement incremental OAuth flow for Sheets & Gmail
+  - [x] Implement encrypted token storage & retrieval
+  - [x] Implement Google Sheets service (create, read, batched row update, column mapping)
+  - [x] Create `SheetSyncOutbox` write-behind queue logic
+  - [x] Build Google settings UI (`/dashboard/settings/google`)
+  - [x] Verify Google integration & commit
 
 - [ ] **Phase 6: Cold Email Campaign System**
   - [ ] Implement Campaign repository, service, and Zod schemas

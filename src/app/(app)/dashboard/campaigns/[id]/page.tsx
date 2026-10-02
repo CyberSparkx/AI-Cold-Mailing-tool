@@ -141,6 +141,29 @@ export default function CampaignDetailPage({ params }: { params: { id: string } 
 
         {/* Action Buttons */}
         <div className="flex items-center gap-2">
+          {/* Test Send Button */}
+          <Button
+            onClick={async () => {
+              try {
+                const res = await fetch(`/api/campaigns/${params.id}/test-send`, { method: "POST" });
+                const json = await res.json();
+                if (res.ok) {
+                  alert(json.data?.message || "Test email sent successfully!");
+                } else {
+                  alert(json.error?.message || "Failed to send test email");
+                }
+              } catch {
+                alert("Failed to send test email");
+              }
+            }}
+            variant="outline"
+            size="sm"
+            className="text-xs gap-1.5"
+          >
+            <Send className="h-3 w-3" />
+            Send Test Email
+          </Button>
+
           {campaign.status === "READY" && (
             <Button
               onClick={() => handleAction("START")}

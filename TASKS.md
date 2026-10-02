@@ -66,12 +66,12 @@ This checklist tracks the incremental progress of all architectural phases defin
   - [x] Build Campaign Wizard UI (`/dashboard/campaigns/new`) & Detail UI (`/dashboard/campaigns/[id]`)
   - [x] Test campaign preview, template validation, and commit
 
-- [ ] **Phase 7: Sending Pipeline & Daily Limit Engine**
-  - [ ] Implement Gmail API sending service (MIME builder, custom Message-ID, List-Unsubscribe)
-  - [ ] Implement 4-layer duplicate prevention (Mongo unique index, ContactLedger, atomic status claim, Redis lock)
-  - [ ] Implement Daily sending limit engine (Mongo `DailySendCounter` + warm-up ramp)
-  - [ ] Build guarded `send.service.ts` pipeline with audit & email logs
-  - [ ] Test test-send mode, verify duplicate protection, commit & push
+- [x] **Phase 7: Sending Pipeline & Daily Limit Engine**
+  - [x] Implement Gmail API sending service (MIME builder, custom Message-ID, List-Unsubscribe)
+  - [x] Implement 4-layer duplicate prevention (Mongo unique index, ContactLedger, atomic status claim, Redis lock)
+  - [x] Implement Daily sending limit engine (Mongo `DailySendCounter` + warm-up ramp)
+  - [x] Build guarded `send.service.ts` pipeline with audit & email logs
+  - [x] Test test-send mode, verify duplicate protection, commit & push
 
 - [ ] **Phase 8: Redis & Background Worker Queue**
   - [ ] Set up Redis client (`src/server/platform/redis/client.ts`) & distributed lock

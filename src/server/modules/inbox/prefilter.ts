@@ -1,5 +1,4 @@
-import "server-only";
-import { InboxCategory } from "@prisma/client";
+﻿import { InboxCategory } from "@prisma/client";
 
 export interface PreFilterResult {
   shouldCallAi: boolean;

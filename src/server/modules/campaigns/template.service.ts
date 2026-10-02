@@ -1,4 +1,3 @@
-import "server-only";
 import { AppError } from "@/server/platform/errors/app-error";
 import { generateUnsubscribeToken } from "@/server/platform/crypto/tokens";
 import { env } from "@/server/platform/config/env";
@@ -86,40 +85,39 @@ export class TemplateService {
 
     const unsubscribeUrl = `${env.NEXT_PUBLIC_APP_URL}/unsubscribe/${token}`;
     const physicalAddress = postalAddress || "Kolkata, West Bengal, India";
+    const senderName = variables.senderName || "Naren Roy";
+    const portfolioUrl = variables.portfolioUrl || "https://narenroy.in/";
 
-    // Plain text version with footer
+    // 1. Natural Human Plain Text (no marketing links or localhost spam triggers)
     const bodyText = `${renderedBody}
 
----
-${variables.senderName || "Naren Roy"}
-Portfolio: ${variables.portfolioUrl || "https://narenroy.in/"}
+-- 
+${senderName}
+${portfolioUrl}
 ${physicalAddress}
 
-Unsubscribe from outreach: ${unsubscribeUrl}`;
+PS: If you prefer not to hear from me, simply reply with "stop" and I will remove you right away.`.trim();
 
-    // Clean, accessible HTML version
+    // Convert newlines in rendered body to clean <br> tags for native Gmail rendering
+    const paragraphsHtml = renderedBody
+      .split(/\n\n+/)
+      .map((p) => `<p style="margin: 0 0 14px 0;">${this.escapeHtml(p).replace(/\n/g, "<br>")}</p>`)
+      .join("");
+
+    // 2. Native Gmail HTML (formatted exactly like an email composed in Gmail web/mobile)
     const bodyHtml = `
-<!DOCTYPE html>
-<html>
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-</head>
-<body style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; line-height: 1.6; color: #1a1a1a; margin: 0; padding: 24px;">
-  <div style="max-width: 600px; margin: 0 auto;">
-    <div style="white-space: pre-wrap; margin-bottom: 24px;">${this.escapeHtml(renderedBody)}</div>
-    
-    <div style="border-top: 1px solid #eaeaea; padding-top: 16px; margin-top: 32px; font-size: 12px; color: #666666;">
-      <p style="margin: 0 0 4px 0;"><strong>${this.escapeHtml(variables.senderName || "Naren Roy")}</strong></p>
-      <p style="margin: 0 0 4px 0;"><a href="${variables.portfolioUrl || "https://narenroy.in/"}" style="color: #2563eb; text-decoration: underline;">${variables.portfolioUrl || "https://narenroy.in/"}</a></p>
-      <p style="margin: 0 0 12px 0;">${this.escapeHtml(physicalAddress)}</p>
-      <p style="margin: 0;">
-        <a href="${unsubscribeUrl}" style="color: #888888; text-decoration: underline;">Click here to unsubscribe immediately</a>
-      </p>
-    </div>
+<div dir="ltr" style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; font-size: 14px; line-height: 1.6; color: #222222;">
+  ${paragraphsHtml}
+  <div style="margin-top: 20px; color: #333333;">
+    <p style="margin: 0 0 2px 0;">--</p>
+    <p style="margin: 0 0 2px 0;"><strong>${this.escapeHtml(senderName)}</strong></p>
+    <p style="margin: 0 0 4px 0;"><a href="${portfolioUrl}" style="color: #1a73e8; text-decoration: none;">${portfolioUrl}</a></p>
+    <p style="margin: 0 0 12px 0; font-size: 11px; color: #777777;">${this.escapeHtml(physicalAddress)}</p>
+    <p style="margin: 0; font-size: 11px; color: #888888;">
+      PS: If you prefer not to hear from me, simply reply with &quot;stop&quot; and I will remove you right away.
+    </p>
   </div>
-</body>
-</html>
+</div>
 `.trim();
 
     return {

@@ -1,5 +1,4 @@
-import "server-only";
-import { prisma } from "@/server/platform/db/prisma";
+﻿import { prisma } from "@/server/platform/db/prisma";
 import { CampaignStatus } from "@prisma/client";
 
 export class CampaignRepository {

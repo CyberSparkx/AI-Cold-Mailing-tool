@@ -1,5 +1,4 @@
-import "server-only";
-import { prisma } from "@/server/platform/db/prisma";
+﻿import { prisma } from "@/server/platform/db/prisma";
 import { LIMITS } from "@/server/platform/config/limits";
 import { logger } from "@/server/platform/logger/logger";
 

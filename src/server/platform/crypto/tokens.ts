@@ -1,5 +1,4 @@
-import "server-only";
-import crypto from "crypto";
+﻿import crypto from "crypto";
 import { env } from "../config/env";
 
 export function sha256(data: string): string {

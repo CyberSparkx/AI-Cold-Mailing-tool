@@ -1,13 +1,14 @@
-import "server-only";
 import { campaignRepository } from "./campaign.repository";
 import { templateService } from "./template.service";
 import { importRecipientsForCampaign, RecipientInput } from "./recipient.import";
 import { CreateCampaignInput, CampaignActionInput } from "./campaign.schemas";
 import { prisma } from "@/server/platform/db/prisma";
-import { CampaignStatus } from "@prisma/client";
+import { CampaignStatus, EmailStatus } from "@prisma/client";
 import { AppError } from "@/server/platform/errors/app-error";
 import { ERROR_CODES } from "@/server/platform/errors/error-codes";
 import { logger } from "@/server/platform/logger/logger";
+import { queueDriver } from "@/server/platform/queue/bullmq.driver";
+import { QUEUE_NAMES } from "@/server/platform/queue/queues";
 
 export class CampaignService {
   async listCampaigns(userId: string) {
@@ -103,10 +104,13 @@ export class CampaignService {
     switch (input.action) {
       case "START":
         if (campaign.status === CampaignStatus.RUNNING) {
-          throw AppError.badRequest("Campaign is already running", undefined, ERROR_CODES.CAMPAIGN_ALREADY_RUNNING);
+          // If already marked running, re-dispatch any pending recipients that haven't been queued yet
+          await this.dispatchPendingRecipients(userId, id);
+          break;
         }
         await campaignRepository.updateStatus(userId, id, CampaignStatus.RUNNING);
         logger.info({ userId, campaignId: id }, "Campaign started");
+        await this.dispatchPendingRecipients(userId, id);
         break;
 
       case "PAUSE":
@@ -117,6 +121,7 @@ export class CampaignService {
       case "RESUME":
         await campaignRepository.updateStatus(userId, id, CampaignStatus.RUNNING);
         logger.info({ userId, campaignId: id }, "Campaign resumed");
+        await this.dispatchPendingRecipients(userId, id);
         break;
 
       case "CANCEL":
@@ -126,6 +131,66 @@ export class CampaignService {
     }
 
     return this.getCampaign(userId, id);
+  }
+
+  async dispatchPendingRecipients(userId: string, campaignId: string) {
+    const pendingRecipients = await prisma.campaignLead.findMany({
+      where: {
+        campaignId,
+        userId,
+        emailStatus: { in: [EmailStatus.NOT_SENT, EmailStatus.QUEUED] },
+      },
+    });
+
+    if (pendingRecipients.length === 0) {
+      logger.info({ campaignId }, "No pending recipients to dispatch");
+      return;
+    }
+
+    logger.info(
+      { userId, campaignId, count: pendingRecipients.length },
+      "Dispatching pending campaign recipients to BullMQ queue"
+    );
+
+    for (const recipient of pendingRecipients) {
+      if (recipient.emailStatus !== EmailStatus.QUEUED) {
+        await prisma.campaignLead.update({
+          where: { id: recipient.id },
+          data: { emailStatus: EmailStatus.QUEUED },
+        });
+      }
+
+      await queueDriver.addJob(QUEUE_NAMES.EMAIL_SEND, {
+        name: "send-email",
+        data: {
+          userId,
+          campaignId,
+          campaignLeadId: recipient.id,
+          recipientEmail: recipient.email,
+        },
+      });
+    }
+
+    const queuedCount = await prisma.campaignLead.count({
+      where: {
+        campaignId,
+        userId,
+        emailStatus: EmailStatus.QUEUED,
+      },
+    });
+
+    const campaign = await prisma.campaign.findUnique({ where: { id: campaignId } });
+    if (campaign) {
+      await prisma.campaign.update({
+        where: { id: campaignId },
+        data: {
+          stats: {
+            ...campaign.stats,
+            queued: queuedCount,
+          },
+        },
+      });
+    }
   }
 
   async previewEmail(userId: string, campaignId: string, recipientId?: string) {

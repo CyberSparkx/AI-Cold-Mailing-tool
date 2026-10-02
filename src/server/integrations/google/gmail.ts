@@ -1,4 +1,3 @@
-import "server-only";
 import { google } from "googleapis";
 import { getValidGoogleClient } from "./token-store";
 import { GoogleService } from "@prisma/client";
@@ -46,7 +45,7 @@ export class GmailSendingService {
     const { from, to, subject, bodyText, bodyHtml, rfcMessageId, unsubscribeUrl, replyTo } = params;
     const boundary = `boundary_${crypto.randomBytes(16).toString("hex")}`;
 
-    // RFC 2822 formatted raw message with List-Unsubscribe headers
+    // Clean RFC 2822 headers formatted like a genuine 1-to-1 personal email (no bulk List-Unsubscribe headers)
     const headers = [
       `From: ${from}`,
       `To: ${to}`,
@@ -54,8 +53,6 @@ export class GmailSendingService {
       `Message-ID: ${rfcMessageId}`,
       `Date: ${new Date().toUTCString()}`,
       `MIME-Version: 1.0`,
-      `List-Unsubscribe: <${unsubscribeUrl}>`,
-      `List-Unsubscribe-Post: List-Unsubscribe=One-Click`,
       ...(replyTo ? [`Reply-To: ${replyTo}`] : []),
       `Content-Type: multipart/alternative; boundary="${boundary}"`,
     ];

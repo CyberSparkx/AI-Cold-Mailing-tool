@@ -1,5 +1,4 @@
-import "server-only";
-import { getGeminiModel } from "../gemini";
+﻿import { getGeminiModel } from "../gemini";
 import { aiCache } from "../cache";
 import { aiUsageService } from "../usage";
 import {

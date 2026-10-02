@@ -1,5 +1,4 @@
-import "server-only";
-import { type ErrorCode, ERROR_CODES } from "./error-codes";
+﻿import { type ErrorCode, ERROR_CODES } from "./error-codes";
 
 export class AppError extends Error {
   public readonly code: ErrorCode;

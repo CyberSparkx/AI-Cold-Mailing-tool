@@ -41,7 +41,7 @@ describe("Cold Email Template Engine", () => {
     }).not.toThrow();
   });
 
-  it("should generate CAN-SPAM compliant footer with address and unsubscribe link", () => {
+  it("should generate CAN-SPAM compliant footer with address and opt-out instructions", () => {
     const fullEmail = templateService.buildFullEmail({
       userId: "650000000000000000000001",
       recipientEmail: "test@company.com",
@@ -55,8 +55,8 @@ describe("Cold Email Template Engine", () => {
     expect(fullEmail.subject).toBe("Quick question for Acme Corp");
     expect(fullEmail.bodyText).toContain("Would you be open to a 10-minute chat this Thursday?");
     expect(fullEmail.bodyText).toContain("123 Market St, Suite 400, San Francisco, CA 94105");
-    expect(fullEmail.bodyText).toContain("Unsubscribe from outreach:");
-    expect(fullEmail.bodyHtml).toContain("Click here to unsubscribe immediately");
+    expect(fullEmail.bodyText).toContain('PS: If you prefer not to hear from me, simply reply with "stop"');
+    expect(fullEmail.bodyHtml).toContain('PS: If you prefer not to hear from me, simply reply with &quot;stop&quot;');
     expect(fullEmail.unsubscribeUrl).toBeDefined();
   });
 });

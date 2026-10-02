@@ -1,5 +1,4 @@
-import "server-only";
-import { RawLead } from "./providers/provider.interface";
+﻿import { RawLead } from "./providers/provider.interface";
 import { normalizeEmail, isValidEmail, isRoleAccount } from "@/lib/email-address";
 
 export interface NormalizedLeadData extends RawLead {

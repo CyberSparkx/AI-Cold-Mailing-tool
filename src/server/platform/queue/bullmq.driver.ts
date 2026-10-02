@@ -1,5 +1,4 @@
-import "server-only";
-import { Queue } from "bullmq";
+﻿import { Queue } from "bullmq";
 import { QueueDriver, QueueJob } from "./queue.interface";
 import { getRedisClient } from "../redis/client";
 import { logger } from "../logger/logger";

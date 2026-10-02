@@ -1,8 +1,7 @@
-import "server-only";
 import { google } from "googleapis";
 import { prisma } from "@/server/platform/db/prisma";
 import { encrypt, decrypt } from "@/server/platform/crypto/encrypt";
-import { getOAuth2Client } from "./oauth";
+import { getOAuth2Client, GOOGLE_SCOPES } from "./oauth";
 import { GoogleService } from "@prisma/client";
 import { AppError } from "@/server/platform/errors/app-error";
 import { ERROR_CODES } from "@/server/platform/errors/error-codes";
@@ -29,7 +28,15 @@ export async function storeGoogleTokens(params: {
   });
 
   const allScopes = Array.from(new Set([...(existing?.scopes || []), ...scopes]));
-  const allServices = Array.from(new Set([...(existing?.services || []), service]));
+  
+  const allServices: GoogleService[] = [];
+  if (allScopes.includes(GOOGLE_SCOPES.SHEETS)) allServices.push(GoogleService.SHEETS);
+  if (allScopes.includes(GOOGLE_SCOPES.GMAIL_SEND)) allServices.push(GoogleService.GMAIL_SEND);
+  if (allScopes.includes(GOOGLE_SCOPES.GMAIL_READ)) allServices.push(GoogleService.GMAIL_READ);
+  // Also include the requested service if specified
+  if (service && !allServices.includes(service) && scopes.length === 0) {
+    allServices.push(service);
+  }
 
   return prisma.googleAccount.upsert({
     where: {

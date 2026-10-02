@@ -1,5 +1,4 @@
-import "server-only";
-
+﻿
 export interface RawLead {
   businessName: string;
   category?: string;

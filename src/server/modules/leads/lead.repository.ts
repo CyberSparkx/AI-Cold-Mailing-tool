@@ -1,5 +1,4 @@
-import "server-only";
-import { prisma } from "@/server/platform/db/prisma";
+﻿import { prisma } from "@/server/platform/db/prisma";
 import { NormalizedLeadData } from "./lead.normalizer";
 import { ListLeadsQuery, UpdateLeadInput } from "./lead.schemas";
 import { LeadStatus, EmailStatus } from "@prisma/client";

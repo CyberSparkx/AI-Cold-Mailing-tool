@@ -1,5 +1,4 @@
-import "server-only";
-import { prisma } from "@/server/platform/db/prisma";
+﻿import { prisma } from "@/server/platform/db/prisma";
 import { ListInboxQuery, UpdateInboxMessageInput } from "./inbox.schemas";
 import { InboxCategory, OpportunityStatus } from "@prisma/client";
 

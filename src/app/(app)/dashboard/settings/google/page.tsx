@@ -40,7 +40,7 @@ export default function GoogleSettingsPage() {
     fetchStatus();
   }, []);
 
-  const handleConnect = (service: "SHEETS" | "GMAIL_SEND" | "GMAIL_READ") => {
+  const handleConnect = (service: "SHEETS" | "GMAIL_SEND" | "GMAIL_READ" | "ALL") => {
     window.location.href = `/api/google/connect?service=${service}`;
   };
 

@@ -1,5 +1,4 @@
-import "server-only";
-
+﻿
 export const LIMITS = {
   // Sending safety
   HARD_DAILY_CAP: parseInt(process.env.HARD_DAILY_CAP || '100', 10),

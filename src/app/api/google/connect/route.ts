@@ -7,7 +7,7 @@ export async function GET(req: NextRequest) {
   try {
     const user = await requireUser();
     const serviceParam = req.nextUrl.searchParams.get("service") || "SHEETS";
-    const service = serviceParam as "SHEETS" | "GMAIL_SEND" | "GMAIL_READ";
+    const service = serviceParam as "SHEETS" | "GMAIL_SEND" | "GMAIL_READ" | "ALL";
 
     const state = JSON.stringify({
       userId: user.id,

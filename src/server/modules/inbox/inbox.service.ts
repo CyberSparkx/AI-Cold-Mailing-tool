@@ -1,5 +1,4 @@
-import "server-only";
-import { google } from "googleapis";
+﻿import { google } from "googleapis";
 import { prisma } from "@/server/platform/db/prisma";
 import { getValidGoogleClient } from "@/server/integrations/google/token-store";
 import { GoogleService, InboxCategory, OpportunityStatus } from "@prisma/client";

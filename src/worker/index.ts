@@ -1,3 +1,4 @@
+// Note: .env.local is loaded by Node via --env-file flag in package.json worker:dev script
 import { Worker } from "bullmq";
 import { getRedisClient } from "@/server/platform/redis/client";
 import { QUEUE_NAMES } from "@/server/platform/queue/queues";
@@ -10,7 +11,7 @@ const connection = getRedisClient();
 
 logger.info("Initializing BullMQ background workers...");
 
-// 1. Email Send Worker (concurrency 1-2 for safe rate limiting)
+// 1. Email Send Worker (concurrency 1 for safe rate limiting)
 const sendEmailWorker = new Worker(
   QUEUE_NAMES.EMAIL_SEND,
   async (job) => {

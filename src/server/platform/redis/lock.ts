@@ -1,5 +1,4 @@
-import "server-only";
-import { getRedisClient } from "./client";
+﻿import { getRedisClient } from "./client";
 import { logger } from "../logger/logger";
 
 export async function acquireLock(key: string, ttlMs = 15000): Promise<string | null> {

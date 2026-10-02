@@ -1,4 +1,3 @@
-import "server-only";
 import Redis from "ioredis";
 import { env } from "../config/env";
 import { logger } from "../logger/logger";

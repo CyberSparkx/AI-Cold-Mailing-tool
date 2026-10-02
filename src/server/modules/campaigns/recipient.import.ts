@@ -1,5 +1,4 @@
-import "server-only";
-import { prisma } from "@/server/platform/db/prisma";
+﻿import { prisma } from "@/server/platform/db/prisma";
 import { normalizeEmail, isValidEmail } from "@/lib/email-address";
 import { checkRecipientEligibility } from "./eligibility";
 import { EmailStatus } from "@prisma/client";

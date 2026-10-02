@@ -1,5 +1,4 @@
-import "server-only";
-import { ChatGoogleGenerativeAI } from "@langchain/google-genai";
+﻿import { ChatGoogleGenerativeAI } from "@langchain/google-genai";
 import { env } from "@/server/platform/config/env";
 import { AppError } from "@/server/platform/errors/app-error";
 

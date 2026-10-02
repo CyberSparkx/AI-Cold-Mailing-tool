@@ -1,5 +1,4 @@
-import "server-only";
-import { providerRegistry } from "./providers/registry";
+﻿import { providerRegistry } from "./providers/registry";
 import { normalizeLead } from "./lead.normalizer";
 import { dedupeAgainstDatabase } from "./lead.dedupe";
 import { leadRepository } from "./lead.repository";

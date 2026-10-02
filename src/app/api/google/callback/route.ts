@@ -47,7 +47,7 @@ export async function GET(req: NextRequest) {
       refreshToken: tokens.refresh_token || undefined,
       expiresIn: tokens.expiry_date ? Math.floor((tokens.expiry_date - Date.now()) / 1000) : 3600,
       scopes: grantedScopes,
-      service: service as GoogleService,
+      service: (service === "ALL" ? GoogleService.GMAIL_SEND : service) as GoogleService,
     });
 
     logger.info({ userId, email, service }, "Google account successfully linked");

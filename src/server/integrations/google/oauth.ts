@@ -1,4 +1,3 @@
-import "server-only";
 import { google } from "googleapis";
 import { env } from "@/server/platform/config/env";
 import { AppError } from "@/server/platform/errors/app-error";
@@ -22,7 +21,7 @@ export function getOAuth2Client() {
   );
 }
 
-export function getAuthorizationUrl(service: "SHEETS" | "GMAIL_SEND" | "GMAIL_READ", state: string) {
+export function getAuthorizationUrl(service: "SHEETS" | "GMAIL_SEND" | "GMAIL_READ" | "ALL", state: string) {
   const oauth2Client = getOAuth2Client();
 
   const scopes: string[] = [GOOGLE_SCOPES.USERINFO_EMAIL];
@@ -32,6 +31,8 @@ export function getAuthorizationUrl(service: "SHEETS" | "GMAIL_SEND" | "GMAIL_RE
     scopes.push(GOOGLE_SCOPES.GMAIL_SEND);
   } else if (service === "GMAIL_READ") {
     scopes.push(GOOGLE_SCOPES.GMAIL_READ);
+  } else if (service === "ALL") {
+    scopes.push(GOOGLE_SCOPES.SHEETS, GOOGLE_SCOPES.GMAIL_SEND, GOOGLE_SCOPES.GMAIL_READ);
   }
 
   return oauth2Client.generateAuthUrl({
@@ -39,5 +40,7 @@ export function getAuthorizationUrl(service: "SHEETS" | "GMAIL_SEND" | "GMAIL_RE
     scope: scopes,
     state,
     prompt: "consent", // ensure refresh token is returned
+    include_granted_scopes: true,
   });
 }
+

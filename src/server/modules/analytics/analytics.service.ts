@@ -1,5 +1,4 @@
-import "server-only";
-import { prisma } from "@/server/platform/db/prisma";
+﻿import { prisma } from "@/server/platform/db/prisma";
 import { getRedisClient } from "@/server/platform/redis/client";
 import { logger } from "@/server/platform/logger/logger";
 import { CampaignStatus, InboxCategory, OpportunityStatus } from "@prisma/client";

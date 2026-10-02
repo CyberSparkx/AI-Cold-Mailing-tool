@@ -1,5 +1,4 @@
-import "server-only";
-
+﻿
 export interface QueueJob<T = any> {
   id?: string;
   name: string;

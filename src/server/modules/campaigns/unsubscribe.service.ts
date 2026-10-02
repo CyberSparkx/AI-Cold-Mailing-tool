@@ -1,5 +1,4 @@
-import "server-only";
-import { prisma } from "@/server/platform/db/prisma";
+﻿import { prisma } from "@/server/platform/db/prisma";
 import { verifyUnsubscribeToken } from "@/server/platform/crypto/tokens";
 import { normalizeEmail, extractDomain } from "@/lib/email-address";
 import { SuppressionReason, EmailStatus, LeadStatus } from "@prisma/client";

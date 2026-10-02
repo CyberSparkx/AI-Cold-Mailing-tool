@@ -1,5 +1,4 @@
-import "server-only";
-import { LeadSourceProvider, LeadSearchParams, LeadSearchResult, RawLead } from "./provider.interface";
+﻿import { LeadSourceProvider, LeadSearchParams, LeadSearchResult, RawLead } from "./provider.interface";
 
 export class CsvProvider implements LeadSourceProvider {
   readonly key = "csv";

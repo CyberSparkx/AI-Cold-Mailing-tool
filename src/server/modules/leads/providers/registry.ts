@@ -1,5 +1,4 @@
-import "server-only";
-import { LeadSourceProvider } from "./provider.interface";
+﻿import { LeadSourceProvider } from "./provider.interface";
 import { OsmProvider } from "./osm.provider";
 import { CsvProvider } from "./csv.provider";
 import { GooglePlacesProvider } from "./places.provider";

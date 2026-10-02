@@ -1,4 +1,3 @@
-import "server-only";
 import { prisma } from "@/server/platform/db/prisma";
 import { gmailSendingService } from "@/server/integrations/google/gmail";
 import { templateService } from "./template.service";
@@ -191,6 +190,7 @@ export class SendService {
             stats: {
               ...campaign.stats,
               sent: campaign.stats.sent + 1,
+              queued: Math.max(0, (campaign.stats.queued || 1) - 1),
             },
           },
         }),
@@ -205,6 +205,25 @@ export class SendService {
           where: { id: campaignLead.leadId, userId },
           data: { emailStatus: EmailStatus.SENT },
         });
+      }
+
+      // Check if all recipients for this campaign have finished processing
+      const remainingUnsent = await prisma.campaignLead.count({
+        where: {
+          campaignId: campaign.id,
+          emailStatus: { in: [EmailStatus.NOT_SENT, EmailStatus.QUEUED, EmailStatus.SENDING] },
+        },
+      });
+
+      if (remainingUnsent === 0) {
+        await prisma.campaign.update({
+          where: { id: campaign.id },
+          data: {
+            status: CampaignStatus.COMPLETED,
+            completedAt: new Date(),
+          },
+        });
+        logger.info({ campaignId: campaign.id }, "All campaign recipients processed; marked as COMPLETED");
       }
 
       logger.info({ campaignLeadId, to: campaignLead.email }, "Email successfully dispatched and logged");
@@ -246,6 +265,7 @@ export class SendService {
           stats: {
             ...campaign.stats,
             failed: campaign.stats.failed + 1,
+            queued: Math.max(0, (campaign.stats.queued || 1) - 1),
           },
         },
       });

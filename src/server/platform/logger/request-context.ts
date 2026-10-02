@@ -1,5 +1,4 @@
-import "server-only";
-import { type NextRequest } from "next/server";
+﻿import { type NextRequest } from "next/server";
 import crypto from "crypto";
 
 export function getRequestId(req?: NextRequest): string {

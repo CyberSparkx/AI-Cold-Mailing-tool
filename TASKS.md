@@ -80,12 +80,12 @@ This checklist tracks the incremental progress of all architectural phases defin
   - [x] Create worker entrypoint (`src/worker/index.ts`) & `Dockerfile.worker`
   - [x] Verify queue processing & commit
 
-- [ ] **Phase 9: Inbox & Opportunity Dashboard**
-  - [ ] Implement Gmail read & incremental sync (`historyId`)
-  - [ ] Implement deterministic pre-filter (ignore newsletters, automated emails, bounces)
-  - [ ] Implement Inbox repository & service
-  - [ ] Build Inbox Opportunity UI (`/dashboard/inbox`) with categorization & message drawer
-  - [ ] Verify inbox pipeline & commit
+- [x] **Phase 9: Inbox & Opportunity Dashboard**
+  - [x] Implement Gmail read & incremental sync (`historyId`)
+  - [x] Implement deterministic pre-filter (ignore newsletters, automated emails, bounces)
+  - [x] Implement Inbox repository & service
+  - [x] Build Inbox Opportunity UI (`/dashboard/inbox`) with categorization & message drawer
+  - [x] Verify inbox pipeline & commit
 
 - [ ] **Phase 10: AI Integration (Gemini + LangChain)**
   - [ ] Set up Gemini client factory with model tiering & token budget tracking (`AiUsage`)

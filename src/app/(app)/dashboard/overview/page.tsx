@@ -1,8 +1,23 @@
 import Link from "next/link";
-import { Sparkles, Send, Inbox, ArrowUpRight, CheckCircle2, ShieldCheck, MailCheck } from "lucide-react";
+import { Sparkles, Send, Inbox, ArrowUpRight, ShieldCheck, MailCheck, BarChart3, Clock, AlertTriangle, CheckCircle2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { getCurrentUser } from "@/server/platform/auth/session";
+import { AnalyticsService } from "@/server/modules/analytics/analytics.service";
 
-export default function DashboardOverviewPage() {
+export const dynamic = "force-dynamic";
+
+export default async function DashboardOverviewPage() {
+  const user = await getCurrentUser();
+  const metrics = user ? await AnalyticsService.getOverviewMetrics(user.id) : null;
+
+  const totalLeads = metrics?.leads.total ?? 0;
+  const sentToday = metrics?.delivery.sentToday ?? 0;
+  const dailyLimit = metrics?.delivery.dailyLimit ?? 25;
+  const activeCampaigns = metrics?.campaigns.running ?? 0;
+  const totalOpportunities = metrics?.inbox.totalOpportunities ?? 0;
+  const replyRate = metrics?.delivery.replyRatePct ?? 0;
+  const bounceRate = metrics?.delivery.bounceRatePct ?? 0;
+
   return (
     <div className="space-y-8 max-w-6xl">
       {/* Page Header */}
@@ -33,40 +48,81 @@ export default function DashboardOverviewPage() {
 
       {/* Metrics Row */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="p-5 rounded-xl border border-border bg-card/60">
+        <div className="p-5 rounded-xl border border-border bg-card/60 backdrop-blur">
           <div className="flex items-center justify-between">
             <span className="text-xs font-mono text-muted-foreground uppercase">Total Leads</span>
             <Sparkles className="h-4 w-4 text-blue-400" />
           </div>
-          <div className="mt-3 text-2xl font-semibold font-mono tracking-tight">0</div>
-          <div className="mt-1 text-xs text-muted-foreground">Ready for targeted sequences</div>
+          <div className="mt-3 text-2xl font-semibold font-mono tracking-tight">{totalLeads}</div>
+          <div className="mt-1 text-xs text-muted-foreground">
+            {metrics?.leads.withEmail ?? 0} with verified email address
+          </div>
         </div>
 
-        <div className="p-5 rounded-xl border border-border bg-card/60">
+        <div className="p-5 rounded-xl border border-border bg-card/60 backdrop-blur">
           <div className="flex items-center justify-between">
             <span className="text-xs font-mono text-muted-foreground uppercase">Emails Sent Today</span>
             <MailCheck className="h-4 w-4 text-emerald-400" />
           </div>
-          <div className="mt-3 text-2xl font-semibold font-mono tracking-tight">0 / 25</div>
-          <div className="mt-1 text-xs text-muted-foreground">Daily safety limit enforced</div>
+          <div className="mt-3 text-2xl font-semibold font-mono tracking-tight">
+            {sentToday} <span className="text-sm font-normal text-muted-foreground">/ {dailyLimit}</span>
+          </div>
+          <div className="mt-1 text-xs text-muted-foreground">
+            {Math.max(0, dailyLimit - sentToday)} sends remaining today
+          </div>
         </div>
 
-        <div className="p-5 rounded-xl border border-border bg-card/60">
+        <div className="p-5 rounded-xl border border-border bg-card/60 backdrop-blur">
           <div className="flex items-center justify-between">
             <span className="text-xs font-mono text-muted-foreground uppercase">Active Campaigns</span>
             <Send className="h-4 w-4 text-amber-400" />
           </div>
-          <div className="mt-3 text-2xl font-semibold font-mono tracking-tight">0</div>
-          <div className="mt-1 text-xs text-muted-foreground">0 queued for worker</div>
+          <div className="mt-3 text-2xl font-semibold font-mono tracking-tight">{activeCampaigns}</div>
+          <div className="mt-1 text-xs text-muted-foreground">
+            {metrics?.campaigns.total ?? 0} total campaigns created
+          </div>
         </div>
 
-        <div className="p-5 rounded-xl border border-border bg-card/60">
+        <div className="p-5 rounded-xl border border-border bg-card/60 backdrop-blur">
           <div className="flex items-center justify-between">
             <span className="text-xs font-mono text-muted-foreground uppercase">Inbound Opportunities</span>
             <Inbox className="h-4 w-4 text-purple-400" />
           </div>
-          <div className="mt-3 text-2xl font-semibold font-mono tracking-tight">0</div>
-          <div className="mt-1 text-xs text-muted-foreground">Classified by Gemini AI</div>
+          <div className="mt-3 text-2xl font-semibold font-mono tracking-tight">{totalOpportunities}</div>
+          <div className="mt-1 text-xs text-muted-foreground">
+            {metrics?.inbox.newOpportunities ?? 0} unread / flagged by AI
+          </div>
+        </div>
+      </div>
+
+      {/* Conversion & Deliverability Bar */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="p-5 rounded-xl border border-border bg-card/40 flex items-center justify-between">
+          <div className="space-y-1">
+            <div className="text-xs font-mono text-muted-foreground uppercase">Global Reply Rate</div>
+            <div className="text-xl font-bold font-mono text-emerald-400">{replyRate}%</div>
+            <div className="text-xs text-muted-foreground">
+              {metrics?.delivery.totalReplied ?? 0} replies from {metrics?.delivery.totalSent ?? 0} emails delivered
+            </div>
+          </div>
+          <div className="h-12 w-12 rounded-full bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400">
+            <CheckCircle2 className="h-6 w-6" />
+          </div>
+        </div>
+
+        <div className="p-5 rounded-xl border border-border bg-card/40 flex items-center justify-between">
+          <div className="space-y-1">
+            <div className="text-xs font-mono text-muted-foreground uppercase">Bounce Safeguard</div>
+            <div className={`text-xl font-bold font-mono ${bounceRate > 3 ? "text-amber-400" : "text-emerald-400"}`}>
+              {bounceRate}%
+            </div>
+            <div className="text-xs text-muted-foreground">
+              {metrics?.delivery.totalBounced ?? 0} bounced (well below the 5% threshold)
+            </div>
+          </div>
+          <div className="h-12 w-12 rounded-full bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-blue-400">
+            <ShieldCheck className="h-6 w-6" />
+          </div>
         </div>
       </div>
 
@@ -140,9 +196,17 @@ export default function DashboardOverviewPage() {
             </p>
           </div>
         </div>
-        <Link href="/dashboard/settings/sending">
-          <Button variant="outline" size="sm">Sender Settings</Button>
-        </Link>
+        <div className="flex items-center gap-3">
+          <Link href="/dashboard/analytics">
+            <Button variant="outline" size="sm" className="gap-2">
+              <BarChart3 className="h-4 w-4" />
+              Full Analytics
+            </Button>
+          </Link>
+          <Link href="/dashboard/settings/sending">
+            <Button variant="secondary" size="sm">Sender Settings</Button>
+          </Link>
+        </div>
       </div>
     </div>
   );

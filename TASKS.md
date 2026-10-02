@@ -96,11 +96,11 @@ This checklist tracks the incremental progress of all architectural phases defin
   - [x] Build AI usage & budget UI (`/dashboard/settings/ai`)
   - [x] Test AI pipelines & commit
 
-- [ ] **Phase 11: Analytics & Reporting**
-  - [ ] Implement Analytics service with cached aggregates
-  - [ ] Build Dashboard Overview (`/dashboard/overview`) with KPIs & active campaigns
-  - [ ] Build Analytics page (`/dashboard/analytics`) with performance visualizations
-  - [ ] Verify analytics & commit
+- [x] **Phase 11: Analytics & Reporting**
+  - [x] Implement Analytics service with cached aggregates
+  - [x] Build Dashboard Overview (`/dashboard/overview`) with KPIs & active campaigns
+  - [x] Build Analytics page (`/dashboard/analytics`) with performance visualizations
+  - [x] Verify analytics & commit
 
 - [ ] **Phase 12: Production Audit, Quality & Testing**
   - [ ] Write unit & integration tests with Vitest

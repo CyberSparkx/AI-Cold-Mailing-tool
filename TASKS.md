@@ -57,14 +57,14 @@ This checklist tracks the incremental progress of all architectural phases defin
   - [x] Build Google settings UI (`/dashboard/settings/google`)
   - [x] Verify Google integration & commit
 
-- [ ] **Phase 6: Cold Email Campaign System**
-  - [ ] Implement Campaign repository, service, and Zod schemas
-  - [ ] Implement Recipient snapshot importer (from Leads, CSV, Sheet)
-  - [ ] Build Template engine with safe merge-field interpolation (`{{businessName}}`, etc.)
-  - [ ] Implement Suppression service & Do-Not-Contact list (`/dashboard/settings/suppression`)
-  - [ ] Implement public `/unsubscribe/[token]` handler & confirmation page
-  - [ ] Build Campaign Wizard UI (`/dashboard/campaigns/new`) & Detail UI (`/dashboard/campaigns/[id]`)
-  - [ ] Test campaign preview, template validation, and commit
+- [x] **Phase 6: Cold Email Campaign System**
+  - [x] Implement Campaign repository, service, and Zod schemas
+  - [x] Implement Recipient snapshot importer (from Leads, CSV, Sheet)
+  - [x] Build Template engine with safe merge-field interpolation (`{{businessName}}`, etc.)
+  - [x] Implement Suppression service & Do-Not-Contact list (`/dashboard/settings/suppression`)
+  - [x] Implement public `/unsubscribe/[token]` handler & confirmation page
+  - [x] Build Campaign Wizard UI (`/dashboard/campaigns/new`) & Detail UI (`/dashboard/campaigns/[id]`)
+  - [x] Test campaign preview, template validation, and commit
 
 - [ ] **Phase 7: Sending Pipeline & Daily Limit Engine**
   - [ ] Implement Gmail API sending service (MIME builder, custom Message-ID, List-Unsubscribe)

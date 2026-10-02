@@ -1,13 +1,22 @@
 "use client";
 
 import { useEffect, type ReactNode } from "react";
+import { usePathname } from "next/navigation";
 import Lenis from "lenis";
 
 export function LenisProvider({ children }: { children: ReactNode }) {
+  const pathname = usePathname();
+
   useEffect(() => {
     // Respect user's motion preference
     const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     if (prefersReducedMotion) return;
+
+    // Do NOT run smooth-scroll inertia inside the dashboard workspace
+    // Dashboard views require instant native scrolling for tables, dropdowns, and data drawers
+    if (pathname?.startsWith("/dashboard")) {
+      return;
+    }
 
     const lenis = new Lenis({
       duration: 1.0,
@@ -29,7 +38,7 @@ export function LenisProvider({ children }: { children: ReactNode }) {
       cancelAnimationFrame(rafId);
       lenis.destroy();
     };
-  }, []);
+  }, [pathname]);
 
   return <>{children}</>;
 }

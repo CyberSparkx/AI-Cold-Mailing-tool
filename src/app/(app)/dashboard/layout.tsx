@@ -18,14 +18,14 @@ export default async function DashboardLayout({
   }
 
   return (
-    <div className="min-h-screen flex bg-background text-foreground">
+    <div className="h-screen flex overflow-hidden bg-background text-foreground">
       {/* Fixed Sidebar */}
       <Sidebar />
 
       {/* Main Content Area */}
-      <div className="flex-1 flex flex-col min-w-0">
+      <div className="flex-1 flex flex-col min-w-0 h-full overflow-hidden">
         <Topbar />
-        <main className="flex-1 p-6 md:p-8 overflow-y-auto" data-lenis-prevent>
+        <main className="flex-1 p-6 md:p-8 overflow-y-auto min-h-0" data-lenis-prevent>
           <PageTransition>{children}</PageTransition>
         </main>
       </div>

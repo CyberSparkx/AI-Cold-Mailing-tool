@@ -225,7 +225,7 @@ Would you be open to a brief 10-minute exchange this Thursday to explore if we m
                 className="w-full px-3 py-2 text-sm rounded-md border border-input bg-background focus:outline-none focus:ring-1 focus:ring-ring"
               />
               <span className="text-[11px] text-muted-foreground">
-                Deceptive fake prefixes (like "Re:" on first touch) are strictly prohibited by compliance engine.
+                Deceptive fake prefixes (like &quot;Re:&quot; on first touch) are strictly prohibited by compliance engine.
               </span>
             </div>
 

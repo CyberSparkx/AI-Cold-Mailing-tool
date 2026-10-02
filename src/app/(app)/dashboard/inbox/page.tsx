@@ -185,7 +185,7 @@ export default function InboxDashboardPage() {
               <Inbox className="h-8 w-8 text-muted-foreground/60 mx-auto" />
               <h3 className="text-sm font-semibold text-foreground">No opportunities found</h3>
               <p className="text-xs text-muted-foreground max-w-sm mx-auto">
-                No inbound emails match the current filters. Click "Sync Latest Messages" to check your Gmail account.
+                No inbound emails match the current filters. Click &quot;Sync Latest Messages&quot; to check your Gmail account.
               </p>
             </div>
           ) : (

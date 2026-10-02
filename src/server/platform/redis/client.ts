@@ -4,6 +4,7 @@ import { env } from "../config/env";
 import { logger } from "../logger/logger";
 
 let redisClient: Redis | null = null;
+let hasLoggedOfflineWarning = false;
 
 export function getRedisClient(): Redis {
   if (redisClient) return redisClient;
@@ -14,20 +15,28 @@ export function getRedisClient(): Redis {
       enableReadyCheck: false,
       lazyConnect: true,
       retryStrategy(times) {
-        const delay = Math.min(times * 100, 3000);
+        // Backoff progressively if Redis isn't running locally (up to 10 seconds)
+        const delay = Math.min(times * 500, 10000);
         return delay;
       },
     });
 
     redisClient.on("error", (err) => {
-      logger.warn({ err: err.message }, "Redis connection warning; operating in resilient mode");
+      if (!hasLoggedOfflineWarning) {
+        hasLoggedOfflineWarning = true;
+        logger.warn(
+          { err: err.message, url: env.REDIS_URL },
+          "Redis is offline or unreachable; background queues and caching will use resilient mode until Redis is started."
+        );
+      }
     });
 
     redisClient.on("connect", () => {
-      logger.info("Redis client connected");
+      hasLoggedOfflineWarning = false;
+      logger.info("Redis client connected successfully");
     });
-  } catch (err) {
-    logger.warn({ err }, "Could not initialize Redis client");
+  } catch (err: any) {
+    logger.warn({ err: err?.message }, "Could not initialize Redis client");
   }
 
   return redisClient!;

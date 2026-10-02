@@ -73,12 +73,12 @@ This checklist tracks the incremental progress of all architectural phases defin
   - [x] Build guarded `send.service.ts` pipeline with audit & email logs
   - [x] Test test-send mode, verify duplicate protection, commit & push
 
-- [ ] **Phase 8: Redis & Background Worker Queue**
-  - [ ] Set up Redis client (`src/server/platform/redis/client.ts`) & distributed lock
-  - [ ] Implement BullMQ queue driver & queue definitions
-  - [ ] Build worker processors: send-email, sheet-flush, inbox-sync, ai-classify, maintenance
-  - [ ] Create worker entrypoint (`src/worker/index.ts`) & `Dockerfile.worker`
-  - [ ] Verify queue processing & commit
+- [x] **Phase 8: Redis & Background Worker Queue**
+  - [x] Set up Redis client (`src/server/platform/redis/client.ts`) & distributed lock
+  - [x] Implement BullMQ queue driver & queue definitions
+  - [x] Build worker processors: send-email, sheet-flush, inbox-sync, ai-classify, maintenance
+  - [x] Create worker entrypoint (`src/worker/index.ts`) & `Dockerfile.worker`
+  - [x] Verify queue processing & commit
 
 - [ ] **Phase 9: Inbox & Opportunity Dashboard**
   - [ ] Implement Gmail read & incremental sync (`historyId`)

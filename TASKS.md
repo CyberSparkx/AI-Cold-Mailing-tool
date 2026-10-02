@@ -87,14 +87,14 @@ This checklist tracks the incremental progress of all architectural phases defin
   - [x] Build Inbox Opportunity UI (`/dashboard/inbox`) with categorization & message drawer
   - [x] Verify inbox pipeline & commit
 
-- [ ] **Phase 10: AI Integration (Gemini + LangChain)**
-  - [ ] Set up Gemini client factory with model tiering & token budget tracking (`AiUsage`)
-  - [ ] Build email classification chain with structured Zod output
-  - [ ] Build lead personalization chain (tailored 1-2 sentence observation)
-  - [ ] Implement SHA-256 prompt content cache
-  - [ ] Connect AI to inbox opportunity scoring & campaign personalization
-  - [ ] Build AI usage & budget UI (`/dashboard/settings/ai`)
-  - [ ] Test AI pipelines & commit
+- [x] **Phase 10: AI Integration (Gemini + LangChain)**
+  - [x] Set up Gemini client factory with model tiering & token budget tracking (`AiUsage`)
+  - [x] Build email classification chain with structured Zod output
+  - [x] Build lead personalization chain (tailored 1-2 sentence observation)
+  - [x] Implement SHA-256 prompt content cache
+  - [x] Connect AI to inbox opportunity scoring & campaign personalization
+  - [x] Build AI usage & budget UI (`/dashboard/settings/ai`)
+  - [x] Test AI pipelines & commit
 
 - [ ] **Phase 11: Analytics & Reporting**
   - [ ] Implement Analytics service with cached aggregates

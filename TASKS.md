@@ -31,13 +31,13 @@ This checklist tracks the incremental progress of all architectural phases defin
   - [x] Set up singleton Prisma client in `src/server/platform/db/prisma.ts`
   - [x] Verify Prisma generation, typecheck, commit & push
 
-- [ ] **Phase 3: Authentication & Security Core**
-  - [ ] Configure Auth.js (NextAuth v5) Google OAuth provider with JWT sessions
-  - [ ] Implement `requireUser` server helper & `withAuth` route wrapper
-  - [ ] Create token encryption/decryption using AES-256-GCM (`crypto/encrypt.ts`)
-  - [ ] Create HMAC token utilities for unsubscribe links (`crypto/tokens.ts`)
-  - [ ] Build `/login` authentication UI with premium design
-  - [ ] Verify authentication flow & commit
+- [x] **Phase 3: Authentication & Security Core**
+  - [x] Configure Auth.js Google OAuth provider with JWT sessions
+  - [x] Implement `requireUser` server helper & `withAuth` route wrapper
+  - [x] Create token encryption/decryption using AES-256-GCM (`crypto/encrypt.ts`)
+  - [x] Create HMAC token utilities for unsubscribe links (`crypto/tokens.ts`)
+  - [x] Build `/login` authentication UI with premium design
+  - [x] Verify authentication flow & commit
 
 - [ ] **Phase 4: Lead Generator Module**
   - [ ] Build provider abstraction interface & registry (`src/server/modules/leads/providers/*`)

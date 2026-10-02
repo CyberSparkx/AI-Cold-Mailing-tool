@@ -1,4 +1,4 @@
-﻿import { google } from "googleapis";
+import { google } from "googleapis";
 import { prisma } from "@/server/platform/db/prisma";
 import { getValidGoogleClient } from "@/server/integrations/google/token-store";
 import { GoogleService, InboxCategory, OpportunityStatus } from "@prisma/client";
@@ -105,76 +105,9 @@ export class InboxService {
       await inboxRepository.updateSyncState(userId, String(Date.now()));
       return { syncedCount: newCount };
     } catch (err: any) {
-      logger.warn({ err: err.message }, "Gmail sync skipped or offline; ensuring mock opportunity records exist");
-      return this.ensureSampleOpportunities(userId);
+      logger.error({ err, userId }, "Gmail inbox sync failed");
+      throw err;
     }
-  }
-
-  private async ensureSampleOpportunities(userId: string) {
-    const count = await prisma.inboxMessage.count({ where: { userId } });
-    if (count > 0) return { syncedCount: 0 };
-
-    // Seed realistic sample inquiries so user can explore the UI immediately
-    const samples = [
-      {
-        gmailMessageId: "sample-inbox-1",
-        threadId: "sample-thread-1",
-        sender: "Sarah Jenkins <sarah@healthtech-innovations.com>",
-        senderEmail: "sarah@healthtech-innovations.com",
-        subject: "Contract Inquiry: Redesigning our Patient Portal",
-        snippet: "Hi Naren, saw your portfolio and loved the clean UI architecture. Are you available for a 6-week contract starting next month to revamp our frontend?",
-        classification: InboxCategory.FREELANCE_OPPORTUNITY,
-        confidence: 0.95,
-        isOpportunity: true,
-        reason: "Direct freelance contract inquiry with timeline",
-      },
-      {
-        gmailMessageId: "sample-inbox-2",
-        threadId: "sample-thread-2",
-        sender: "Vikram Malhotra <vikram@stellar-fintech.io>",
-        senderEmail: "vikram@stellar-fintech.io",
-        subject: "Quote Request for Web Application Development",
-        snippet: "Hello Naren, we are planning to launch our B2B SaaS dashboard in Q1 and need an experienced engineer to build the Next.js frontend with Tailwind and GSAP animations.",
-        classification: InboxCategory.SOFTWARE_INQUIRY,
-        confidence: 0.92,
-        isOpportunity: true,
-        reason: "Quote request for Next.js web application",
-      },
-      {
-        gmailMessageId: "sample-inbox-3",
-        threadId: "sample-thread-3",
-        sender: "Alex Thorne <alex@thorne-partners.co.uk>",
-        senderEmail: "alex@thorne-partners.co.uk",
-        subject: "Partnership Exploration",
-        snippet: "Dear Naren, our agency in London is looking for a senior technical partner for ongoing client web builds. Would you be open to an exploratory call?",
-        classification: InboxCategory.PARTNERSHIP,
-        confidence: 0.88,
-        isOpportunity: true,
-        reason: "Agency partnership inquiry",
-      },
-    ];
-
-    for (const sample of samples) {
-      await prisma.inboxMessage.create({
-        data: {
-          userId,
-          gmailMessageId: sample.gmailMessageId,
-          threadId: sample.threadId,
-          sender: sample.sender,
-          senderEmail: sample.senderEmail,
-          subject: sample.subject,
-          snippet: sample.snippet,
-          receivedAt: new Date(),
-          classification: sample.classification,
-          confidence: sample.confidence,
-          isOpportunity: sample.isOpportunity,
-          opportunityStatus: OpportunityStatus.NEW,
-          reason: sample.reason,
-        },
-      });
-    }
-
-    return { syncedCount: samples.length };
   }
 }
 

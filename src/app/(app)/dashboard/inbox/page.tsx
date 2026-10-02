@@ -69,14 +69,17 @@ export default function InboxDashboardPage() {
 
   const handleSync = async () => {
     setSyncing(true);
+    setError(null);
     try {
       const res = await fetch("/api/inbox/sync", { method: "POST" });
       const json = await res.json();
       if (res.ok) {
         fetchMessages();
+      } else {
+        setError(json.error?.message || "Failed to sync inbox from Gmail");
       }
-    } catch {
-      // offline / mock
+    } catch (err: any) {
+      setError(err?.message || "Network error while syncing inbox");
     } finally {
       setSyncing(false);
     }

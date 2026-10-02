@@ -8,8 +8,8 @@
     "start": "next start",
     "lint": "next lint",
     "typecheck": "tsc --noEmit",
-    "prisma:generate": "prisma generate",
-    "prisma:push": "prisma db push",
+    "prisma:generate": "node --env-file=.env.local node_modules/prisma/build/index.js generate",
+    "prisma:push": "node --env-file=.env.local node_modules/prisma/build/index.js db push",
     "worker:dev": "tsx watch src/worker/index.ts",
     "worker:build": "tsup src/worker/index.ts --out-dir dist/worker --format cjs --no-splitting",
     "test": "vitest run"

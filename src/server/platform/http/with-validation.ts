@@ -1,9 +1,12 @@
 import "server-only";
 import { type NextRequest } from "next/server";
-import { type ZodSchema } from "zod";
+import { type z } from "zod";
 import { AppError } from "../errors/app-error";
 
-export async function validateBody<T>(req: NextRequest, schema: ZodSchema<T>): Promise<T> {
+export async function validateBody<T extends z.ZodTypeAny>(
+  req: NextRequest,
+  schema: T
+): Promise<z.output<T>> {
   try {
     const raw = await req.json();
     const result = schema.safeParse(raw);
@@ -17,7 +20,10 @@ export async function validateBody<T>(req: NextRequest, schema: ZodSchema<T>): P
   }
 }
 
-export function validateQuery<T>(req: NextRequest, schema: ZodSchema<T>): T {
+export function validateQuery<T extends z.ZodTypeAny>(
+  req: NextRequest,
+  schema: T
+): z.output<T> {
   const url = new URL(req.url);
   const queryObj: Record<string, string> = {};
   url.searchParams.forEach((val, key) => {

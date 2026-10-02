@@ -39,15 +39,15 @@ This checklist tracks the incremental progress of all architectural phases defin
   - [x] Build `/login` authentication UI with premium design
   - [x] Verify authentication flow & commit
 
-- [ ] **Phase 4: Lead Generator Module**
-  - [ ] Build provider abstraction interface & registry (`src/server/modules/leads/providers/*`)
-  - [ ] Implement OpenStreetMap (Overpass) provider & CSV provider
-  - [ ] Implement Lead normalizer, deduplication engine (`dedupeKey`), and syntax validators
-  - [ ] Implement Lead repository & service (`lead.repository.ts`, `lead.service.ts`)
-  - [ ] Build Lead API endpoints (`/api/leads`, `/api/leads/search`, `/api/leads/export`)
-  - [ ] Build Lead Generator UI (`/dashboard/leads/new`) and Leads Table (`/dashboard/leads`)
-  - [ ] Add CSV & Excel export capabilities
-  - [ ] Test deduplication & lead management, commit & push
+- [x] **Phase 4: Lead Generator Module**
+  - [x] Build provider abstraction interface & registry (`src/server/modules/leads/providers/*`)
+  - [x] Implement OpenStreetMap (Overpass) provider & CSV provider
+  - [x] Implement Lead normalizer, deduplication engine (`dedupeKey`), and syntax validators
+  - [x] Implement Lead repository & service (`lead.repository.ts`, `lead.service.ts`)
+  - [x] Build Lead API endpoints (`/api/leads`, `/api/leads/search`, `/api/leads/export`)
+  - [x] Build Lead Generator UI (`/dashboard/leads/new`) and Leads Table (`/dashboard/leads`)
+  - [x] Add CSV & Excel export capabilities
+  - [x] Test deduplication & lead management, commit & push
 
 - [ ] **Phase 5: Google Integration (OAuth & Google Sheets)**
   - [ ] Implement incremental OAuth flow for Sheets & Gmail
